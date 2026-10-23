@@ -918,6 +918,15 @@
   // ---------------------------------------------------------------- boot
   Store.onChange(() => { /* a sync landed while a view is open */ if (!S && !M && !T && !$('#scrim')) { const top = main.scrollTop; render(); main.scrollTop = top; } });
   function quietSync() { if (Store.configured()) Store.sync().catch(() => { }); }
+  // A setup link (…/#k=<sync key>) stores the key once, then drops it from the
+  // address bar so it does not linger in history or a shared screenshot.
+  (function keyFromLink() {
+    const m = /[#&]k=([^&]+)/.exec(location.hash || '');
+    if (!m) return;
+    Store.setConfig({ key: decodeURIComponent(m[1]) });
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { }
+    setTimeout(() => toast('Sync key saved'), 400);
+  })();
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { quietSync(); if (!S && !M && !T) render(); } });
   render();
   quietSync();

@@ -21,6 +21,6 @@ Deploy = commit and push to `main`.
 Every record is an entry `{ id, kind, date, updatedAt, ... }` with kind `session`, `gtg` (a day's reps),
 `mobility`, `bench`, `activity` or `gear`. Deletes are tombstones. The BlueStep endpoint
 `/b/spartandata` (org U141648, beh.bluestep.net) stores them; it needs a key, entered once in
-Plan → Settings and never committed here.
+Plan → Settings (or opened once as `…/spartan-2027/#k=<key>`) and never committed here.
 
 The helmet icon is an original drawing, not the Spartan Race logo.
