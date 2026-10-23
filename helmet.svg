@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Original front-view Corinthian helmet with a transverse crest. Not the Spartan Race mark. -->
+  <path fill="#d3222a" d="M84 214 C84 34 428 34 428 214 L404 214 C398 92 114 92 108 214 Z"/>
+  <path stroke="#0e0f10" stroke-width="7" stroke-linecap="round" fill="none"
+        d="M118 150 L98 140 M150 112 L136 96 M194 92 L186 72 M256 84 L256 62 M318 92 L326 72 M362 112 L376 96 M394 150 L414 140"/>
+  <path fill="#d3222a" stroke="#0e0f10" stroke-width="12" paint-order="stroke" fill-rule="evenodd" d="
+    M256 112 C344 112 398 168 398 262 L398 384 C398 414 380 434 350 440 L294 452 L288 352 C286 340 280 334 272 332 L240 332 C232 334 226 340 224 352 L218 452 L162 440 C132 434 114 414 114 384 L114 262 C114 168 168 112 256 112 Z
+    M146 236 C186 224 222 228 242 240 L242 290 C214 280 178 284 154 300 C146 284 144 256 146 236 Z
+    M366 236 C326 224 290 228 270 240 L270 290 C298 280 334 284 358 300 C366 284 368 256 366 236 Z"/>
+  <path stroke="#0e0f10" stroke-width="6" fill="none" stroke-linecap="round" d="M156 196 C204 178 308 178 356 196"/>
+</svg>
