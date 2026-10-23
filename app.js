@@ -887,8 +887,14 @@
         <details><summary class="small dim" style="padding:4px 0">Endpoint</summary><input id="cfg-url" value="${esc(cfg.url)}"></details>
         <div class="row"><button class="btn small" style="flex:1" data-act="saveCfg">Save & sync</button><button class="btn ghost small" style="flex:1" data-act="export">Export backup</button></div>
         <label class="small dim">Restore from a backup file<input type="file" id="imp" accept="application/json,.json"></label>
+        <p class="tiny faint">Screen ${screenInfo()}</p>
       </div>
       <p class="tiny faint" style="text-align:center">Helmet icon is an original drawing, not the Spartan Race mark. Aroo.</p>`;
+  }
+  // For diagnosing layout on a phone: what the browser reports vs the screen.
+  function screenInfo() {
+    const cs = getComputedStyle(document.body);
+    return `${innerWidth}×${innerHeight} · screen ${screen.width}×${screen.height} · body ${Math.round(parseFloat(cs.height))} · vv ${window.visualViewport ? Math.round(visualViewport.height) : '-'} · ${navigator.standalone ? 'app' : 'browser'} · v4`;
   }
   function exList(keys) {
     const q = exQuery.toLowerCase();

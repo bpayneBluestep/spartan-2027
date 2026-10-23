@@ -37,10 +37,10 @@
   /* 100vh, not 100% / inset:0: in an iOS home-screen app with a translucent status bar,
      100% stops one status-bar height short and leaves a black band under the nav.
      Everything that used to be position:fixed is absolute inside this full-height body. */
-  html { height: 100vh; overflow: hidden; }
+  html { height: var(--app-h, 100vh); overflow: hidden; }
   html, body { margin: 0; padding: 0; }
   body {
-    position: fixed; top: 0; left: 0; right: 0; height: 100vh; overflow: hidden;
+    position: fixed; top: 0; left: 0; right: 0; height: var(--app-h, 100vh); overflow: hidden;
     background: var(--bg); color: var(--ink); font: 400 16px/1.45 var(--body);
     -webkit-font-smoothing: antialiased;
   }
@@ -191,6 +191,25 @@
   details > summary::-webkit-details-marker { display: none; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
+<script>
+  /* Home-screen app: iOS can lay the page out at Safari's height (screen minus
+     the address bar) even though the app owns the whole screen, leaving a blank
+     band at the bottom. There, size the page to the physical screen instead. */
+  (function () {
+    function fit() {
+      var root = document.documentElement;
+      var standalone = navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+      if (!standalone) { root.style.removeProperty('--app-h'); return; }
+      var portrait = window.innerHeight >= window.innerWidth;
+      var h = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
+      root.style.setProperty('--app-h', Math.max(h, window.innerHeight) + 'px');
+    }
+    fit();
+    window.addEventListener('resize', fit);
+    window.addEventListener('orientationchange', function () { setTimeout(fit, 300); });
+    window.addEventListener('pageshow', fit);
+  })();
+</script>
 </head>
 <body>
 <main id="main"></main>

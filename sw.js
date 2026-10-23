@@ -1,7 +1,7 @@
 /* Spartan 2027 — offline service worker.
    Bump CACHE_VERSION whenever any file changes, or phones keep the old copy. */
 
-const CACHE_VERSION = "spartan-2027-v3";
+const CACHE_VERSION = "spartan-2027-v4";
 
 const CORE = [
   "./",
@@ -24,7 +24,7 @@ const CORE = [
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_VERSION).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
+  event.waitUntil(caches.open(CACHE_VERSION).then((c) => c.addAll(CORE.map((u) => new Request(u, { cache: "reload" })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (event) => {
