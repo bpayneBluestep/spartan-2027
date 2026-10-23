@@ -1,7 +1,7 @@
 /* Spartan 2027 — offline service worker.
    Bump CACHE_VERSION whenever any file changes, or phones keep the old copy. */
 
-const CACHE_VERSION = "spartan-2027-v4";
+const CACHE_VERSION = "spartan-2027-v5";
 
 const CORE = [
   "./",

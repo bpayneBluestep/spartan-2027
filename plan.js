@@ -63,12 +63,12 @@
 
   const warmup = [
     { name: 'Easy cardio', dose: '3 min', how: 'Bike, incline walk or brisk walk. Just get warm.' },
-    { name: 'Leg swings', dose: '10 each way, each leg', how: 'Front-to-back, then side-to-side, holding a wall.' },
-    { name: 'World\'s greatest stretch', dose: '3 per side', how: 'Lunge, elbow to instep, rotate the arm to the ceiling.' },
-    { name: 'Glute bridge', dose: '10', how: 'Squeeze glutes at the top, ribs down.' },
-    { name: 'Bird-dog', dose: '5 per side', how: 'Slow, hips level.' },
-    { name: 'Bodyweight squat', dose: '10', how: 'Full depth you can control.' },
-    { name: 'Scap pull-ups', dose: '5', how: 'Hang, then pull the shoulders down without bending the elbows.' },
+    { name: 'Leg swings', move: 'leg-swing', dose: '10 each way, each leg', how: 'Front-to-back, then side-to-side, holding a wall.' },
+    { name: 'World\'s greatest stretch', move: 'worlds-greatest', dose: '3 per side', how: 'Lunge, elbow to instep, rotate the arm to the ceiling.' },
+    { name: 'Glute bridge', move: 'glute-bridge', dose: '10', how: 'Squeeze glutes at the top, ribs down.' },
+    { name: 'Bird-dog', move: 'big3', dose: '5 per side', how: 'Slow, hips level.' },
+    { name: 'Bodyweight squat', move: 'air-squat', dose: '10', how: 'Full depth you can control.' },
+    { name: 'Scap pull-ups', move: 'dead-hang', dose: '5', how: 'Hang, then pull the shoulders down without bending the elbows.' },
   ];
 
   // Coaching card per exercise: equip (what to grab, which machine), setup,
@@ -450,11 +450,11 @@
 
   const gtg = {
     items: [
-      { key: 'pushups', name: 'Push-ups', unit: 'reps', step: [5, 10] },
-      { key: 'pullups', name: 'Pull-ups', unit: 'reps', step: [1, 2], how: 'Can\'t do a full one yet? Negatives count rep for rep.' },
-      { key: 'hang',    name: 'Dead hang', unit: 'sec', step: [15, 30] },
-      { key: 'squats',  name: 'Squats', unit: 'reps', step: [10, 20] },
-      { key: 'burpees', name: 'Burpees', unit: 'reps', step: [5, 10] },
+      { key: 'pushups', ex: 'pushup', name: 'Push-ups', unit: 'reps', step: [5, 10] },
+      { key: 'pullups', ex: 'pullup', name: 'Pull-ups', unit: 'reps', step: [1, 2], how: 'Can\'t do a full one yet? Negatives count rep for rep.' },
+      { key: 'hang', ex: 'dead-hang',    name: 'Dead hang', unit: 'sec', step: [15, 30] },
+      { key: 'squats', move: 'air-squat', demo: 'Feet shoulder-width, toes out a little. Sit down between your heels, chest tall, heels down, then stand and squeeze your glutes.',  name: 'Squats', unit: 'reps', step: [10, 20] },
+      { key: 'burpees', ex: 'burpee', name: 'Burpees', unit: 'reps', step: [5, 10] },
     ],
     rules: [
       'Spread the day\'s total across the workday: a set every time you stand up from the desk.',
@@ -466,25 +466,25 @@
 
   const mobility = {
     daily: [
-      { name: 'Cat-cow', dose: '10 slow', how: 'On hands and knees, round and arch the whole spine.' },
-      { name: 'Couch stretch', dose: '60 s / side', how: 'Back knee against a wall or couch, front foot forward, squeeze the back glute. The single best stretch for desk hips.' },
-      { name: 'World\'s greatest stretch', dose: '5 / side', how: 'Lunge, elbow to instep, rotate the arm up.' },
-      { name: '90/90 hip switches', dose: '10 total', how: 'Seated, both knees bent at 90°, rotate side to side.' },
-      { name: 'Hamstring floss', dose: '45 s / side', how: 'On your back, strap or towel around the foot, leg straight up.' },
-      { name: 'Open books', dose: '8 / side', how: 'On your side, knees bent, rotate the top arm open to the floor behind you.' },
-      { name: 'Child\'s pose side reach', dose: '45 s', how: 'Walk the hands to each side to stretch the lats.' },
-      { name: 'Calf stretch', dose: '45 s / side, ×2', how: 'Against a wall, once with the knee straight, once bent.' },
-      { name: 'Foot roll', dose: '60 s / foot', how: 'Roll the arch over a lacrosse or golf ball. Plantar fascia care.' },
+      { name: 'Cat-cow', move: 'cat-cow', dose: '10 slow', how: 'On hands and knees, round and arch the whole spine.' },
+      { name: 'Couch stretch', move: 'couch-stretch', dose: '60 s / side', how: 'Back knee against a wall or couch, front foot forward, squeeze the back glute. The single best stretch for desk hips.' },
+      { name: 'World\'s greatest stretch', move: 'worlds-greatest', dose: '5 / side', how: 'Lunge, elbow to instep, rotate the arm up.' },
+      { name: '90/90 hip switches', move: '90-90', dose: '10 total', how: 'Seated, both knees bent at 90°, rotate side to side.' },
+      { name: 'Hamstring floss', move: 'hamstring-floss', dose: '45 s / side', how: 'On your back, strap or towel around the foot, leg straight up.' },
+      { name: 'Open books', move: 'open-books', dose: '8 / side', how: 'On your side, knees bent, rotate the top arm open to the floor behind you.' },
+      { name: 'Child\'s pose side reach', move: 'childs-pose', dose: '45 s', how: 'Walk the hands to each side to stretch the lats.' },
+      { name: 'Calf stretch', move: 'calf-stretch', dose: '45 s / side, ×2', how: 'Against a wall, once with the knee straight, once bent.' },
+      { name: 'Foot roll', move: 'foot-roll', dose: '60 s / foot', how: 'Roll the arch over a lacrosse or golf ball. Plantar fascia care.' },
     ],
     long: [
       { name: 'Daily routine', dose: '12 min', how: 'Everything above.' },
-      { name: 'Deep squat hold', dose: '3 × 45 s', how: 'Hold a post, heels down, chest up.' },
-      { name: 'Pigeon', dose: '90 s / side', how: 'Front shin across, hips square, fold forward.' },
-      { name: 'Frog', dose: '90 s', how: 'Knees wide, rock hips back slowly.' },
-      { name: 'Thread the needle', dose: '6 / side', how: 'T-spine rotation on hands and knees.' },
-      { name: 'Doorway pec stretch', dose: '45 s / side', how: 'Undo the desk hunch.' },
-      { name: 'Supine twist', dose: '60 s / side', how: 'Knees to one side, shoulders flat.' },
-      { name: 'Legs up the wall', dose: '3 min', how: 'Breathe slowly through the nose. Recovery, not stretching.' },
+      { name: 'Deep squat hold', move: 'deep-squat', dose: '3 × 45 s', how: 'Hold a post, heels down, chest up.' },
+      { name: 'Pigeon', move: 'pigeon', dose: '90 s / side', how: 'Front shin across, hips square, fold forward.' },
+      { name: 'Frog', move: 'frog', dose: '90 s', how: 'Knees wide, rock hips back slowly.' },
+      { name: 'Thread the needle', move: 'thread-needle', dose: '6 / side', how: 'T-spine rotation on hands and knees.' },
+      { name: 'Doorway pec stretch', move: 'doorway-pec', dose: '45 s / side', how: 'Undo the desk hunch.' },
+      { name: 'Supine twist', move: 'supine-twist', dose: '60 s / side', how: 'Knees to one side, shoulders flat.' },
+      { name: 'Legs up the wall', move: 'legs-up-wall', dose: '3 min', how: 'Breathe slowly through the nose. Recovery, not stretching.' },
     ],
   };
 

@@ -2,7 +2,8 @@
  * figure.js — side-view animated stick figure for exercise demos.
  *
  * A pose is { hip:[x,y], t (torso lean, degrees forward from vertical),
- * feet:[near, far], hands:[near, far], knee?, elbow? }. Knees and elbows are
+ * feet:[near, far], hands:[near, far], knee?, elbow?, knees? }. knees pins a
+ * knee exactly ([near|null, far|null]) for floor stretches IK cannot guess. Knees and elbows are
  * solved with two-link IK, so anything pinned (hands on the floor, feet on a
  * box) stays pinned while the body moves between keyframes.
  *
@@ -47,8 +48,8 @@
     const head = [sh[0] + Math.sin(hr) * L.neck, sh[1] - Math.cos(hr) * L.neck];
     const kb = p.knee == null ? -1 : p.knee;
     const eb = p.elbow == null ? 1 : p.elbow;
-    const legs = p.feet.map(function (f) {
-      const k = ik(hip, f, L.thigh, L.shin, kb);
+    const legs = p.feet.map(function (f, i) {
+      const k = (p.knees && p.knees[i]) || ik(hip, f, L.thigh, L.shin, kb);
       return { hip: hip, knee: k, foot: reach(hip, k, f, L.shin) };
     });
     const arms = p.hands.map(function (h) {
@@ -71,6 +72,10 @@
       plank: !!(a.plank && b.plank),
       knee: k < 0.5 ? a.knee : b.knee,
       elbow: k < 0.5 ? a.elbow : b.elbow,
+      knees: (a.knees || b.knees) ? [0, 1].map(function (i) {
+        const ka = a.knees && a.knees[i], kb = b.knees && b.knees[i];
+        return ka && kb ? lerp2(ka, kb, k) : (k < 0.5 ? ka : kb) || null;
+      }) : undefined,
     };
   }
 
@@ -81,7 +86,7 @@
 
   // Props: scenery drawn behind the figure, and gear that rides on the hands
   // (drawn in front). Hand-attached props read the solved hand positions.
-  const ATTACHED = { db: 1, goblet: 1, kb: 1, pack: 1, bag: 1, grip: 1, spear: 1, strap: 1 };
+  const ATTACHED = { db: 1, goblet: 1, kb: 1, pack: 1, bag: 1, grip: 1, spear: 1, strap: 1, ball: 1, band: 1 };
 
   function prop(pr, s) {
     const h = function (i) { return s.arms[i].hand; };
@@ -132,6 +137,14 @@
         const p = h(0), a = (pr.angle || -8) * Math.PI / 180;
         const dx = Math.cos(a) * 46, dy = Math.sin(a) * 46;
         return '<line class="fg-spear" x1="' + f1(p[0] - dx) + '" y1="' + f1(p[1] - dy) + '" x2="' + f1(p[0] + dx * 1.2) + '" y2="' + f1(p[1] + dy * 1.2) + '"/>';
+      }
+      case 'ball': {   // under the near foot, rolling with it
+        const p = s.legs[0].foot;
+        return '<circle class="fg-wt" cx="' + f1(p[0]) + '" cy="' + (GROUND - 7) + '" r="7"/>';
+      }
+      case 'band': {   // strap from the hands to the near foot
+        const p = mid(), q = s.legs[0].foot;
+        return '<line class="fg-spear" x1="' + f1(p[0]) + '" y1="' + f1(p[1]) + '" x2="' + f1(q[0]) + '" y2="' + f1(q[1]) + '"/>';
       }
       default: return '';
     }

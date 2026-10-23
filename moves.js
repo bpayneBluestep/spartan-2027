@@ -10,6 +10,7 @@
   const DB2 = [{ type: 'db', hand: 0 }, { type: 'db', hand: 1 }];
   const HANG_BAR = { type: 'bar', x1: 80, x2: 160, y: -6 };
   const HANG_VIEW = '0 -40 240 240';
+  const TOP = '0 50 240 190';   // seen from above: no ground, body spans y 90-210
   const f = function (pose, hold, move) { return { pose: pose, hold: hold || 0, move: move || 0 }; };
 
   // Walk cycle in place. hands and lean vary per carry.
@@ -73,6 +74,10 @@
     'glute-bridge-sl': { label: 'Single-leg glute bridge', props: [G], frames: [
       f({ hip: [108, 174], t: -87.6, feet: [[146, 180], [170, 140]], hands: [[112, 178], [110, 178]] }, 400, 1000),
       f({ hip: [110, 140], t: -117.6, feet: [[146, 180], [186, 110]], hands: [[118, 180], [116, 180]] }, 900, 1000),
+    ] },
+    'glute-bridge': { label: 'Glute bridge', props: [G], frames: [
+      f({ hip: [108, 174], t: -87.6, feet: [[146, 180], [150, 180]], hands: [[112, 178], [110, 178]] }, 400, 1000),
+      f({ hip: [110, 140], t: -117.6, feet: [[146, 180], [150, 180]], hands: [[118, 180], [116, 180]] }, 900, 1000),
     ] },
     'db-bench': { label: 'Dumbbell bench press', props: [G, { type: 'box', x: 40, y: 132, w: 110, h: 12 }, { type: 'box', x: 90, y: 144, w: 10, h: 36 }].concat(DB2), frames: [
       f({ hip: [120, 126], t: -90, feet: [[156, 180], [152, 180]], hands: [[72, 70], [70, 70]] }, 400, 1500),
@@ -189,6 +194,87 @@
       f({ hip: [120, 90], t: 10, feet: [[104, 140], [124, 180]], hands: [[132, 92], [136, 92]] }, 0, 200),
     ] },
     'hike': { label: 'Long climb', props: [{ type: 'mountain' }, G], frames: walk([[136, 98], [110, 100]], 14, 520) },
+
+    // ---- mobility. Floor stretches pin their knees; the two that only read
+    // from above (open books, supine twist) use TOP: no ground, head left.
+    'air-squat': { label: 'Bodyweight squat', props: [G], frames: [
+      f(stand, 400, 1100),
+      f({ hip: [100, 140], t: 35, feet: [[124, 180], [118, 180]], hands: [[178, 104], [176, 106]] }, 400, 1000),
+    ] },
+    'leg-swing': { label: 'Leg swings', props: [G], frames: [
+      f({ hip: [130, 96], t: -4, feet: [[204, 140], [128, 180]], hands: [[140, 98], [136, 98]] }, 0, 550),
+      f({ hip: [130, 96], t: 8, feet: [[60, 146], [128, 180]], hands: [[140, 98], [136, 98]] }, 0, 550),
+    ] },
+    'cat-cow': { label: 'Cat-cow', props: [G], frames: [
+      f({ hip: [90, 134], t: 76, headTilt: -38, feet: [[48, 178], [50, 178]], hands: [[137, 180], [135, 180]] }, 700, 1500),
+      f({ hip: [92, 140], t: 70, headTilt: 48, feet: [[48, 178], [50, 178]], hands: [[137, 180], [135, 180]] }, 700, 1500),
+    ] },
+    'couch-stretch': { label: 'Couch stretch', props: [G, { type: 'box', x: 14, y: 128, w: 48, h: 52 }], frames: [
+      f({ hip: [88, 140], t: -4, knees: [null, [70, 178]], feet: [[150, 180], [66, 136]], hands: [[124, 132], [122, 134]] }, 1200, 1400),
+      f({ hip: [94, 142], t: -10, knees: [null, [72, 178]], feet: [[150, 180], [66, 136]], hands: [[128, 134], [126, 136]] }, 2000, 1400),
+    ] },
+    'worlds-greatest': { label: "World's greatest stretch", props: [G], frames: [
+      f({ hip: [112, 134], t: 76, feet: [[168, 180], [56, 176]], hands: [[146, 178], [144, 178]] }, 600, 1200),
+      f({ hip: [112, 132], t: 66, headTilt: -30, feet: [[168, 180], [56, 176]], hands: [[160, 52], [148, 176]] }, 1200, 1200),
+    ] },
+    '90-90': { label: '90/90 hip switches', props: [G], frames: [
+      f({ hip: [110, 172], t: -8, knees: [[150, 168], [72, 168]], feet: [[132, 178], [90, 178]], hands: [[84, 176], [82, 176]] }, 700, 900),
+      f({ hip: [110, 172], t: -8, feet: [[156, 178], [150, 178]], hands: [[84, 176], [82, 176]] }, 0, 900),
+      f({ hip: [110, 172], t: -8, knees: [[72, 168], [150, 168]], feet: [[90, 178], [132, 178]], hands: [[84, 176], [82, 176]] }, 700, 900),
+      f({ hip: [110, 172], t: -8, feet: [[156, 178], [150, 178]], hands: [[84, 176], [82, 176]] }, 0, 900),
+    ] },
+    'hamstring-floss': { label: 'Hamstring floss', props: [G, { type: 'band' }], frames: [
+      f({ hip: [130, 172], t: -90, feet: [[172, 104], [214, 176]], hands: [[120, 130], [118, 132]] }, 300, 900),
+      f({ hip: [130, 172], t: -90, feet: [[138, 90], [214, 176]], hands: [[112, 126], [110, 128]] }, 300, 900),
+    ] },
+    'open-books': { label: 'Open books (from above)', view: TOP, props: [], frames: [
+      f({ hip: [130, 150], t: -90, knees: [[130, 108], [134, 110]], feet: [[172, 108], [174, 110]], hands: [[80, 92], [84, 93]] }, 500, 900),
+      f({ hip: [130, 150], t: -90, knees: [[130, 108], [134, 110]], feet: [[172, 108], [174, 110]], hands: [[22, 150], [84, 93]] }, 0, 900),
+      f({ hip: [130, 150], t: -90, headTilt: 40, knees: [[130, 108], [134, 110]], feet: [[172, 108], [174, 110]], hands: [[80, 208], [84, 93]] }, 1600, 900),
+      f({ hip: [130, 150], t: -90, knees: [[130, 108], [134, 110]], feet: [[172, 108], [174, 110]], hands: [[22, 150], [84, 93]] }, 0, 900),
+    ] },
+    'childs-pose': { label: "Child's pose", props: [G], frames: [
+      f({ hip: [74, 152], t: 102, headTilt: 10, feet: [[64, 178], [66, 178]], hands: [[180, 176], [178, 176]] }, 1500, 1600),
+      f({ hip: [78, 148], t: 98, headTilt: 10, feet: [[64, 178], [66, 178]], hands: [[180, 176], [178, 176]] }, 1500, 1600),
+    ] },
+    'calf-stretch': { label: 'Calf stretch', props: [G, { type: 'box', x: 194, y: 20, w: 14, h: 160 }], frames: [
+      f({ hip: [110, 106], t: 30, feet: [[140, 180], [70, 180]], hands: [[192, 62], [190, 64]] }, 1800, 1200),
+      f({ hip: [106, 118], t: 36, feet: [[140, 180], [70, 180]], hands: [[192, 76], [190, 78]] }, 1800, 1200),
+    ] },
+    'foot-roll': { label: 'Foot roll', props: [G, { type: 'box', x: 56, y: 132, w: 52, h: 48 }, { type: 'ball' }], frames: [
+      f({ hip: [92, 128], t: -2, feet: [[132, 166], [150, 180]], hands: [[128, 124], [132, 126]] }, 0, 1100),
+      f({ hip: [92, 128], t: -2, feet: [[160, 166], [150, 180]], hands: [[128, 124], [132, 126]] }, 0, 1100),
+    ] },
+    'deep-squat': { label: 'Deep squat hold', props: [G, { type: 'box', x: 166, y: 60, w: 7, h: 120 }], frames: [
+      f({ hip: [104, 152], t: 22, feet: [[124, 180], [120, 180]], hands: [[166, 116], [166, 112]] }, 1800, 1500),
+      f({ hip: [102, 148], t: 26, feet: [[124, 180], [120, 180]], hands: [[166, 116], [166, 112]] }, 1800, 1500),
+    ] },
+    'pigeon': { label: 'Pigeon', props: [G], frames: [
+      f({ hip: [104, 164], t: 0, knees: [[144, 174], null], feet: [[104, 178], [20, 176]], hands: [[112, 172], [110, 172]] }, 1200, 1800),
+      f({ hip: [104, 166], t: 74, headTilt: 10, knees: [[144, 174], null], feet: [[104, 178], [20, 176]], hands: [[188, 178], [186, 178]] }, 2200, 1800),
+    ] },
+    'frog': { label: 'Frog', props: [G], frames: [
+      f({ hip: [96, 140], t: 80, feet: [[60, 178], [62, 178]], hands: [[172, 178], [170, 178]] }, 600, 1800),
+      f({ hip: [80, 150], t: 84, feet: [[60, 178], [62, 178]], hands: [[172, 178], [170, 178]] }, 1200, 1800),
+    ] },
+    'thread-needle': { label: 'Thread the needle', props: [G], frames: [
+      f({ hip: [90, 138], t: 70, headTilt: -20, feet: [[48, 178], [50, 178]], hands: [[137, 64], [135, 180]] }, 600, 1300),
+      f({ hip: [92, 140], t: 86, headTilt: 30, feet: [[48, 178], [50, 178]], hands: [[96, 170], [135, 180]] }, 1200, 1300),
+    ] },
+    'doorway-pec': { label: 'Doorway pec stretch', props: [G, { type: 'box', x: 60, y: 0, w: 8, h: 180 }], frames: [
+      f({ hip: [110, 98], t: 0, elbow: -1, feet: [[150, 180], [104, 180]], hands: [[70, 50], [114, 104]] }, 600, 1500),
+      f({ hip: [122, 98], t: 6, feet: [[150, 180], [104, 180]], hands: [[70, 50], [128, 104]] }, 2000, 1500),
+    ] },
+    'supine-twist': { label: 'Supine twist (from above)', view: TOP, props: [], frames: [
+      f({ hip: [130, 150], t: -90, knees: [[132, 192], [128, 190]], feet: [[174, 194], [170, 192]], hands: [[80, 92], [80, 208]] }, 1800, 1000),
+      f({ hip: [130, 150], t: -90, knees: [[170, 150], [168, 148]], feet: [[210, 152], [208, 150]], hands: [[80, 92], [80, 208]] }, 0, 1000),
+      f({ hip: [130, 150], t: -90, knees: [[132, 108], [128, 110]], feet: [[174, 106], [170, 108]], hands: [[80, 92], [80, 208]] }, 1800, 1000),
+      f({ hip: [130, 150], t: -90, knees: [[170, 150], [168, 148]], feet: [[210, 152], [208, 150]], hands: [[80, 92], [80, 208]] }, 0, 1000),
+    ] },
+    'legs-up-wall': { label: 'Legs up the wall', props: [G, { type: 'box', x: 180, y: 40, w: 14, h: 140 }], frames: [
+      f({ hip: [172, 172], t: -90, feet: [[172, 88], [174, 89]], hands: [[120, 178], [118, 178]] }, 2000, 2000),
+      f({ hip: [172, 172], t: -90, headTilt: -6, feet: [[172, 88], [174, 89]], hands: [[120, 178], [118, 178]] }, 2000, 2000),
+    ] },
   };
 
   if (typeof module !== 'undefined' && module.exports) { module.exports = moves; } else { root.MOVES = moves; }

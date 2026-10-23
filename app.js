@@ -100,6 +100,23 @@
     return `<div class="thumb" aria-hidden="true">${Figure.svg(m, Figure.render(m, pose))}</div>`;
   }
 
+  // A small "how to" button: a still of the move with a play badge. src says
+  // where the move lives: ex:<exercise>, mob:<daily|long>:<i>, warm:<i>, gtg:<key>.
+  function demoSrc(src) {
+    const [kind, a, b] = src.split(':');
+    if (kind === 'ex') return { ex: a, move: a };
+    if (kind === 'mob') { const it = P.mobility[a][+b]; return { move: it.move, name: it.name, dose: it.dose, how: it.how }; }
+    if (kind === 'warm') { const it = P.warmup[+a]; return { move: it.move, name: it.name, dose: it.dose, how: it.how }; }
+    if (kind === 'gtg') { const it = P.gtg.items.find((x) => x.key === a); return it.ex ? { ex: it.ex, move: it.ex } : { move: it.move, name: it.name, how: it.demo }; }
+    return {};
+  }
+  function demoBtn(src) {
+    const d = demoSrc(src);
+    if (!d.ex && !(d.move && window.MOVES[d.move])) return '';
+    const m = window.MOVES[d.move];
+    const still = m ? Figure.svg(m, Figure.render(m, (m.frames[1] || m.frames[0]).pose)) : '';
+    return `<button class="demo" data-act="demo" data-src="${esc(src)}" aria-label="How to do it">${still}<i aria-hidden="true">▶</i></button>`;
+  }
   // ---------------------------------------------------------------- icons
   const ICON = {
     today: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M12 3c4.5 0 7 2.8 7 7.5V17c0 1.5-1 2.4-2.4 2.7L14 20l-.3-4.5c0-1-.7-1.5-1.7-1.5s-1.7.5-1.7 1.5L10 20l-2.6-.3C6 19.4 5 18.5 5 17v-6.5C5 5.8 7.5 3 12 3z"/><path d="M7.5 10.5h3.5v2.5M16.5 10.5H13v2.5"/></svg>',
@@ -337,7 +354,7 @@
       <div class="body"><div class="stack">
         ${w.deload ? `<div class="note">Deload week: do one less set of everything.</div>` : ''}
         ${showWarm ? `<details class="blk"><summary class="spread"><span><b>Warm-up</b> <span class="small dim">7 min, every session</span></span><span class="dim">${d.warm.filter(Boolean).length}/${P.warmup.length}</span></summary>
-          <div class="list" style="margin-top:8px">${P.warmup.map((x, i) => `<button class="item" data-act="warm" data-i="${i}"><span class="mark ${d.warm[i] ? 'on' : ''}">${d.warm[i] ? '✓' : ''}</span><span><b>${esc(x.name)}</b> <span class="small dim">${esc(x.dose)}</span><br><span class="small dim">${esc(x.how)}</span></span><span></span></button>`).join('')}</div></details>` : ''}
+          <div class="list" style="margin-top:8px">${P.warmup.map((x, i) => `<div class="row" style="gap:6px"><button class="item" style="flex:1" data-act="warm" data-i="${i}"><span class="mark ${d.warm[i] ? 'on' : ''}">${d.warm[i] ? '✓' : ''}</span><span><b>${esc(x.name)}</b> <span class="small dim">${esc(x.dose)}</span><br><span class="small dim">${esc(x.how)}</span></span><span></span></button>${demoBtn('warm:' + i)}</div>`).join('')}</div></details>` : ''}
         ${blocks.map((b, i) => blockHTML(b, i)).join('')}
         <div class="blk">
           <b>How hard was it?</b>
@@ -625,6 +642,17 @@
     });
   };
 
+  ACT.demo = (el) => {
+    const d = demoSrc(el.dataset.src);
+    if (d.ex) { ACT.coach({ dataset: { ex: d.ex } }); return; }
+    sheet(`<div class="spread"><h1 style="font-size:32px">${esc(d.name)}</h1><button class="x" data-act="closeSheet" aria-label="Close">✕</button></div>
+      <div class="fig" id="coach-fig"></div>
+      ${d.dose ? `<div><span class="lbl">Dose</span><p>${esc(d.dose)}</p></div>` : ''}
+      <div><span class="lbl">How</span><p>${esc(d.how)}</p></div>`, (root) => {
+      sheetStop = Figure.mount($('#coach-fig', root), window.MOVES[d.move]);
+    });
+  };
+
   // ---------------------------------------------------------------- activity log
   const ACT_TYPES = ['Walk', 'Run', 'Hike', 'Bike', 'Other'];
   ACT.activity = (el) => {
@@ -672,7 +700,7 @@
         const pct = Math.min(100, v / target * 100);
         return `<div class="card">
           <div class="counter">
-            <div><span class="lbl">${esc(it.name)}</span><div class="big num">${v}<small> / ${target}${it.unit === 'sec' ? ' s' : ''}</small></div>${it.how ? `<span class="tiny faint">${esc(it.how)}</span>` : ''}</div>
+            <div><span class="row" style="gap:8px"><span class="lbl">${esc(it.name)}</span>${demoBtn('gtg:' + it.key)}</span><div class="big num">${v}<small> / ${target}${it.unit === 'sec' ? ' s' : ''}</small></div>${it.how ? `<span class="tiny faint">${esc(it.how)}</span>` : ''}</div>
             ${it.key === 'hang' ? `<button class="sw ${HS ? 'run' : ''}" style="padding:0 14px" data-act="hangsw" data-d="${date}">${HS ? 'Stop' : '⏱ Hang'}</button>` : `<span class="mark ${pct >= 100 ? 'on' : ''}">${pct >= 100 ? '✓' : ''}</span>`}
             <div class="bar ${pct >= 100 ? 'ok' : ''}" style="grid-column:1/-1"><span style="width:${pct}%"></span></div>
             <div class="btns">${it.step.map((s) => `<button class="btn ghost small" data-act="rep" data-k="${it.key}" data-v="${s}" data-d="${date}">+${s}</button>`).join('')}
@@ -738,7 +766,7 @@
       const b = Math.ceil(M.left); M.left -= dt;
       if (Math.ceil(M.left) !== b && Math.ceil(M.left) <= 3 && M.left > 0) beep(660, 80);
       if (M.left <= 0) { beep(988, 300); mobNext(); return; }
-      drawMob();
+      const c = $('#mob .clock'); if (c) c.textContent = mmss(M.left);
     }, 250);
     keepAwake(true);
     drawMob();
@@ -750,21 +778,29 @@
   }
   function drawMob() {
     const el = $('#mob'); if (!el) return;
+    if (M.stopFig) { M.stopFig(); M.stopFig = null; }
     const it = M.items[M.i], total = M.items.reduce((a, x) => a + doseSec(x.dose), 0);
     el.innerHTML = `<header><div class="spread"><span class="lbl">${M.which === 'long' ? 'Long mobility' : 'Daily mobility'} · ${M.i + 1} of ${M.items.length}</span><button class="x" data-act="mobClose" aria-label="Close">✕</button></div></header>
       <div class="body"><div class="timer">
         <div class="phase" style="font-size:40px">${esc(it.name)}</div><div class="dim">${esc(it.dose)}</div>
+        ${it.move && window.MOVES[it.move] ? `<div class="fig" id="mob-fig" style="max-width:220px"></div>` : ''}
         <div class="clock num">${mmss(M.left)}</div>
         <p style="max-width:34ch;margin:0 auto">${esc(it.how)}</p>
         <div class="tiny faint">About ${Math.round(total / 60)} min total</div>
       </div>
-      <div class="list" style="margin-top:12px">${M.items.map((x, i) => `<div class="item"><span class="mark ${i < M.i ? 'on' : ''}">${i < M.i ? '✓' : i + 1}</span><span class="${i === M.i ? '' : 'dim'}">${esc(x.name)}</span><span class="small dim">${esc(x.dose)}</span></div>`).join('')}</div></div>
+      <div class="list" style="margin-top:12px">${M.items.map((x, i) => `<div class="item"><span class="mark ${i < M.i ? 'on' : ''}">${i < M.i ? '✓' : i + 1}</span><span class="${i === M.i ? '' : 'dim'}">${esc(x.name)}<br><span class="small dim">${esc(x.dose)}</span></span>${demoBtn(mobSrc(x))}</div>`).join('')}</div></div>
       <footer class="row"><button class="btn ghost" style="flex:1" data-act="mobPause">${M.paused ? (M.i === 0 && M.left === doseSec(it.dose) ? 'Start' : 'Resume') : 'Pause'}</button><button class="btn ghost" style="flex:1" data-act="mobSkip">Next</button><button class="btn" style="flex:1" data-act="mobDone">Done</button></footer>`;
+    const fg = $('#mob-fig'); if (fg) M.stopFig = Figure.mount(fg, window.MOVES[it.move]);
+  }
+  // The runner's list joins daily + long, so find each item's home for its demo.
+  function mobSrc(x) {
+    let i = P.mobility.daily.indexOf(x); if (i >= 0) return 'mob:daily:' + i;
+    i = P.mobility.long.indexOf(x); return i >= 0 ? 'mob:long:' + i : '';
   }
   ACT.mobPause = () => { M.paused = !M.paused; M.last = Date.now(); drawMob(); };
   ACT.mobSkip = () => mobNext();
   ACT.mobDone = () => finishMob();
-  ACT.mobClose = () => { clearInterval(M.iv); M = null; const el = $('#mob'); if (el) el.remove(); keepAwake(!!S); render(); };
+  ACT.mobClose = () => { clearInterval(M.iv); if (M.stopFig) M.stopFig(); M = null; const el = $('#mob'); if (el) el.remove(); keepAwake(!!S); render(); };
   function finishMob() {
     const which = M.which;
     Store.put({ id: 'mob-' + which + '-' + today(), kind: 'mobility', date: today(), routine: which });
@@ -871,7 +907,8 @@
       <h1 style="font-size:40px">The plan</h1>
       <div class="card red"><span class="lbl">${esc(P.race.place)}</span><h3>${esc(P.race.name)} · ${esc(P.race.distance)} · ${P.race.obstacles} obstacles</h3><p>${esc(P.race.goal)}</p></div>
       <div class="card"><h2>Mobility</h2>
-        <div class="row"><button class="btn" style="flex:1" data-act="mobility" data-which="daily">Daily · 12 min</button><button class="btn ghost" style="flex:1" data-act="mobility" data-which="long">Long · 25 min</button></div></div>
+        <div class="row"><button class="btn" style="flex:1" data-act="mobility" data-which="daily">Daily · 12 min</button><button class="btn ghost" style="flex:1" data-act="mobility" data-which="long">Long · 25 min</button></div>
+        <div class="list">${['daily', 'long'].map((w) => P.mobility[w].map((x, i) => x.move ? `<button class="item" data-act="demo" data-src="mob:${w}:${i}">${thumb(x.move)}<span><b>${esc(x.name)}</b><br><span class="small dim">${esc(x.dose)}${w === 'long' ? ' · long routine' : ''}</span></span><span class="dim">›</span></button>` : '').join('')).join('')}</div></div>
       <div class="card"><h2>Exercises</h2>
         <input id="ex-q" type="search" placeholder="Search ${exKeys.length} exercises" value="${esc(exQuery)}" aria-label="Search exercises">
         <div class="list" id="ex-list">${exList(exKeys)}</div></div>
@@ -894,7 +931,7 @@
   // For diagnosing layout on a phone: what the browser reports vs the screen.
   function screenInfo() {
     const cs = getComputedStyle(document.body);
-    return `${innerWidth}×${innerHeight} · screen ${screen.width}×${screen.height} · body ${Math.round(parseFloat(cs.height))} · vv ${window.visualViewport ? Math.round(visualViewport.height) : '-'} · ${navigator.standalone ? 'app' : 'browser'} · v4`;
+    return `${innerWidth}×${innerHeight} · screen ${screen.width}×${screen.height} · body ${Math.round(parseFloat(cs.height))} · vv ${window.visualViewport ? Math.round(visualViewport.height) : '-'} · ${navigator.standalone ? 'app' : 'browser'} · v5`;
   }
   function exList(keys) {
     const q = exQuery.toLowerCase();
